@@ -6,7 +6,7 @@
 # Technologies:  
 Cloud9, HTML5, CSS3, Bootstrap 3, AJAX, jQuery  
 # Description:  
-This assignment calculates the number days between 2 dates using AJAX calls to a PHP file.  The site was created with HTML5, CSS3, Bootstrap 3, AJAX and jQuery in [Cloud9 - https://c9.io](https://c9.io/).  
+This assignment calculates the number days between 2 dates using AJAX calls to a PHP file.  The webpage was created with HTML5, CSS3, Bootstrap 3, AJAX and jQuery in [Cloud9 - https://c9.io](https://c9.io/).  
 # Screenshots:
 ![Screenshot](github/github_screenshot_iti323_ajaxjquerydata1.jpg)  
 
