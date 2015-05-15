@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+ITI 332 Homework 5
+- Ajax, jQuery and data using Cloud 9 (http://c9.io) and Bootstrap (http://getbootstrap.com)
+Created by Michael De Leon
+October 28, 2013
+-->
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+  <title>Ajax, jQuery and data</title>
+  
+  <script src="js/jquery-1.10.2.min.js"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/main.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+  
+    <!-- Form title -->
+    <div class="col-lg-12">
+      <h1>Calculate the difference</h1>
+    </div>
+    
+    <!-- Main form -->
+    <form class="form-horizontal" role="form" id="mainForm">
+    
+      <!-- Date 1 input -->
+      <div class="form-group">
+        <label for="inputDate1" class="col-lg-2 control-label">First Date:</label>
+    	<div class="col-lg-4">
+          <input type="text" class="form-control" id="inputDate1">
+    	</div>
+  	  </div>
+	  
+      <!-- Date 2 input -->
+      <div class="form-group">
+        <label for="inputDate2" class="col-lg-2 control-label">Second Date:</label>
+    	<div class="col-lg-4">
+          <input type="text" class="form-control" id="inputDate2">
+    	</div>
+  	  </div>
+      
+      <!-- Submit button -->
+      <div class="form-group">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-4">
+          <button type="submit" class="btn btn-default" id="calculateButton">Calculate</button>
+        </div>
+      </div>
+      
+    </form><!-- End of form -->
+    
+    <!-- Errors title -->
+    <div class="col-lg-12">
+      <h1>Errors:</h1>
+    </div>
+    
+    <!-- Errors placeholder -->
+    <div id="errors">
+    </div>
+    
+    <!-- Results title -->
+    <div class="col-lg-12">
+      <h1>Results:</h1>
+    </div>
+    
+    <!-- Results placeholder -->
+    <div id="results">
+    </div>
+    
+    <script type="text/javascript">
+
+      //start unobtrusive javascript
+      $(document).ready(function() {
+        
+		// set the submit button to return false to prevent page from refreshing
+		$("#mainForm").submit(function ()    {
+			return false;
+		});
+		
+		// START calculation
+        $("#calculateButton").click(function () {
+          //initialize error messages
+		  var errorMessages1 = "";
+		  
+		  // make regex pattern
+		  var DatePattern = /^[0-1]{1}[0-9]{1}\/[0-3]{1}[0-9]{1}\/[0-9]{4}$/;
+		  
+		  // if statement to test pattern
+          if (!DatePattern.test($("#inputDate1").val())) {
+            // when it doesn't match, add to the list of errors
+            errorMessages1 += "<p>First date is required. MM/DD/YYYY format</p>";
+		  }
+		  
+		  // if statement to test pattern
+		  if (!DatePattern.test($("#inputDate2").val())) {
+            // when it doesn't match, add to the list of errors
+            errorMessages1 += "<p>Second date is required. MM/DD/YYYY format</p>";
+		  }
+		  
+          // if statement to see if there are any errors
+		  if (errorMessages1.length > 0) {
+		    $("#errors").empty().append(errorMessages1);
+		    $("#results").empty();
+		  } else {
+		    //no validation errors!
+			var dataobj = {
+			  date1: $("#inputDate1").val(),
+			  date2: $("#inputDate2").val(),
+		    };
+		  
+		    $.ajax({
+		      url: '/calculate.php',
+			  data: dataobj,
+			  dataType: 'json',
+			  success: function (serverResponse) {
+			    
+			    // 1 day difference
+			    if (serverResponse.days == 1) {
+			      if (!serverResponse.invert) {
+			        $("#results").empty().append('<p>' + dataobj.date1 + ' is ' + serverResponse.days + ' day behind of ' + dataobj.date2 + '.</p>');
+			      } else {
+			        $("#results").empty().append('<p>' + dataobj.date1 + ' is ' + serverResponse.days + ' day ahead of ' + dataobj.date2 + '.</p>');
+			      }
+                  
+			    // more than 1 day difference
+			    } else if (serverResponse.days > 1) {
+			      if (!serverResponse.invert) {
+			        $("#results").empty().append('<p>' + dataobj.date1 + ' is ' + serverResponse.days + ' days behind of ' + dataobj.date2 + '.</p>');
+			      } else {
+			        $("#results").empty().append('<p>' + dataobj.date1 + ' is ' + serverResponse.days + ' days ahead of ' + dataobj.date2 + '.</p>');
+			      }
+			    
+			    // same day
+                } else {
+                    $("#results").empty().append('<p>' + dataobj.date1 + ' is the same day as ' + dataobj.date2 + '.</p>');
+                }
+				$("#errors").empty();
+			  },
+			  
+			  error: function () {
+			    $("#errors").empty().append('<p>An error occurred contacting the server.</p>');
+			    $("#results").empty();
+			  }
+		    });
+		    return true;
+		  }
+		});//calculateButton
+	    
+	  });// end unobtrusive javascript
+	    
+    </script>
+  
+  </div><!-- container -->
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
